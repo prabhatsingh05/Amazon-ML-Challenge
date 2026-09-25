@@ -42,9 +42,24 @@ The evaluator reports macro F0.5 and missing or extra prediction rows.
 - src/metrics.py: per-entity and macro F0.5 helpers, including singleton scoring.
 - src/make_split.py: chunked, deterministic split by Source 1 entity ID.
 - src/evaluate.py: score predictions against the held-out labels.
+- src/evaluate_candidates.py: report blocking recall and singleton candidate rate.
 
 Candidate generation and the matching model are developed as separate components and will be documented here when integrated.
 
 ## Reproducibility
 
 Python package versions are pinned in requirements.txt. The full pipeline should run using only the supplied challenge files and these code artefacts; do not use external business lookup, geocoding, or enrichment services.
+## Candidate pair interface
+
+The blocking stage should write a pair-level TSV with these columns:
+
+    source1_entity_id    candidate_entity_id
+
+Each row is one unique Source 1 / Source 2-or-3 pair. Include only validation Source 1 IDs when measuring validation recall. Every pair sent to the matcher must appear in this candidate file.
+
+Measure blocking recall and singleton candidate rate with:
+
+    .\.venv\Scripts\python.exe .\code\business_entity_resolution\src\evaluate_candidates.py --ground-truth .\work\splits\valid_labels.tsv --candidates .\work\validation_candidate_pairs.tsv
+
+The submission candidate_pairs.tsv is a grouped format; this pair-level TSV is the internal interface between blocking and scoring.
+
