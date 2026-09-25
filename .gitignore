@@ -1,0 +1,7 @@
+# Keep local challenge data, virtual environments, and generated split files out of Git.
+**/dataset/
+.venv/
+**/.venv/
+__pycache__/
+*.py[cod]
+/work/
